@@ -10,7 +10,6 @@
 #'
 
 
-
 update_ukbdatabase = function(rm_pp, prev_vid, new_vid){
   ukb49913 = aws.s3::s3readRDS(paste0("s3://ukb.tbilab/genome/ukb49913",prev_vid,".rds"))
   ukb49913 = ukb49913 %>% filter(!ukb49913$eid %in% rm_pp)
@@ -23,11 +22,11 @@ update_ukbdatabase = function(rm_pp, prev_vid, new_vid){
 
   uni_cats = unique(dic$CategoryID)
 
-
   mycluster <- makeCluster(5)
   registerDoParallel(mycluster)
 
-  foreach(cat in uni_cats) %dopar% {
+  foreach(i = 1:length(uni_cats)) %dopar% {
+    cat = uni_cats[i]
     cat_name = (dic %>% filter(CategoryID == cat) %>% select(Category))[1,1]
     field_ids = unlist(dic %>% filter(CategoryID == cat) %>% select(FieldID))
     tmp_cols = which(column_ids %in% field_ids)
