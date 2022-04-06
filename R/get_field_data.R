@@ -1,8 +1,7 @@
 #'
 #' Retrieve data from selected fields.
 #'
-#' @param ids: list of field ids
-#' @param keywords: list of field keywords.
+#' @param keyorid: list of field keyorid.
 #' @param match_name: return will have column names with name or id, default=FALSE, which is field ids.
 #'
 #' @return: a list of data frames for fields
@@ -12,13 +11,14 @@
 #'
 
 
-get_field_data = function(ids=NULL,keywords=NULL,match_name=FALSE){
-  if (!is.null(keywords)){
-    ids = ukb_dic[str_detect(ukb_dic$Field,paste(keywords,collapse = "|")),FieldID]
+get_field_data = function(keyorid = NULL,match_name=FALSE){
+  if (!is.null(keyorid)){
+    id_loc = suppressWarnings(which(is.na(as.numeric(keyorid))))
+    keyorid[id_loc] = ukb_dic[str_detect(ukb_dic$Field,paste(keyorid[id_loc],collapse = "|")),"FieldID"]
   }
-  cats = unlist(ukb_dic %>% filter(FieldID %in% ids) %>% distinct(Category))
+  cats = unlist(ukb_dic %>% filter(FieldID %in% keyorid) %>% distinct(Category))
   loaded_cats = names(ukb_data_list)
-  patterns = paste0("^",ids,"-")
+  patterns = paste0("^",keyorid,"-")
   output = list()
 
   if (loaded_cats[1] == "ALL"){
@@ -38,8 +38,19 @@ get_field_data = function(ids=NULL,keywords=NULL,match_name=FALSE){
     }
   }
 
+  if (match_name){
+    for (n in names(output)){
+      field = sapply(colnames(output[[n]]),function(x){strsplit(x,"-")}[[1]][1])[-1]
+      postfix = sapply(colnames(output[[n]]),function(x){strsplit(x,"-")}[[1]][2])[-1]
+      colnames(output[[n]])[-1] = paste0(ukb_dic[str_detect(ukb_dic$FieldID,paste(field,collapse = "|")),"Field"],"-",postfix)
+    }
+  }
+
   return (output)
 }
 
 
-# get_field_data(ids = c("20179","20242","3160"))
+# output = get_field_data(c("Sexually molested as a child","20179","20242","3160"), match_name = TRUE)
+# output
+# length(output)
+# names(output)

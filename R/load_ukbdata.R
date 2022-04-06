@@ -26,10 +26,13 @@ load_ukbdata <- function(cats = c("ALL")){
     ukb_data_list = list()
 
     if (cats[1] == "ALL"){
-        ukb_data_list["ALL"] = aws.s3::s3readRDS("s3://ukb.tbilab/genome/ukb49913.rds")
+        ukb_data_list[["ALL"]] = aws.s3::s3readRDS("s3://ukb.tbilab/genome/ukb49913.rds")
         }
     else{
         for (cat in cats){
+            if (suppressWarnings(!is.na(as.numeric(cat)))){
+                cat = unlist(cat_list %>% filter(CategoryID == cat) %>% select(Category))
+            }
             orig_cat = cat
             cat = str_replace_all(cat,"/"," or ")
             ukb_data_list[[orig_cat]] = aws.s3::s3readRDS(paste0("s3://ukb.tbilab/genome/Categorized/",cat,".rds"))
@@ -40,6 +43,6 @@ load_ukbdata <- function(cats = c("ALL")){
     print("Completed!")
     }
 
-# load_ukbdata(c("Asthma outcomes","Fluid intelligence / reasoning"))
+# load_ukbdata(c("Asthma outcomes","Fluid intelligence / reasoning","46"))
 # head(ukb_data_list$`Asthma outcomes`)
 # head(ukb_data_list$`Fluid intelligence / reasoning`)

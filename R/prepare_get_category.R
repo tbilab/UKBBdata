@@ -1,7 +1,7 @@
 #'
 #' Get name of the categories.
 #'
-#' @param keyword: keyword of the category name
+#' @param keyorid: mixture of keyword of the category name and/or id of the category.
 #'
 #' @return:
 #'  \itemize{
@@ -14,13 +14,16 @@
 #'
 
 
-prepare_get_category = function(keyword = NULL){
+prepare_get_category = function(keyorid = NULL){
     cat_list = aws.s3::s3readRDS("s3://ukb.tbilab/genome/UKB_Category_ID.rds")
-    if (!is.null(keyword)){
-        cat_list = cat_list[str_detect(cat_list$Category,paste(keyword,collapse = '|')),]
+    if (!is.null(keyorid)){
+        id_loc = suppressWarnings(which(!is.na(as.numeric(keyorid))))
+        id = keyorid[id_loc]
+        keyorid[id_loc] = unlist(cat_list %>% filter(CategoryID %in% id) %>% select(Category))
+
+        cat_list = cat_list[str_detect(cat_list$Category,paste(keyorid,collapse = '|')),]
         }
-    print(cat_list)
     return(cat_list)
 }
 
-# prepare_get_category(c("Asthma","blood"))
+# prepare_get_category(c("Asthma","blood","46"))
