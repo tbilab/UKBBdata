@@ -1,7 +1,7 @@
 #'
 #' Get name of the categories.
 #'
-#' @param keyorid: mixture of keyword of the category name and/or id of the category.
+#' @param keyorid: Category ID and/or name you need.
 #'
 #' @return:
 #'  \itemize{

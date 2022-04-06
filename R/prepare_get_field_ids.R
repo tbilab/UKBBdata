@@ -1,7 +1,7 @@
 #'
 #' Get Field IDs in the Category before loading the data.
 #'
-#' @param categories: All the categories that you need.
+#' @param keyorid: Category ID and/or name you need.
 #'
 #' @return:
 #'  \itemize{
@@ -14,19 +14,21 @@
 #'
 
 
-prepare_get_field_ids = function(cat = NULL){
+prepare_get_field_ids = function(keyorid = NULL){
     ukb_dic = aws.s3::s3readRDS("s3://ukb.tbilab/genome/UKB_Field_Dictionary.rds")
 
-    if (is.null(cat)){
+    if (is.null(keyorid)){
         field_ids = ukb_dic %>% select(Category,FieldID,Field)
     }
     else{
-        field_ids = ukb_dic %>% filter(Category %in% cat) %>% select(Category,FieldID,Field)
+        id_loc = suppressWarnings(which(!is.na(as.numeric(keyorid))))
+        id = keyorid[id_loc]
+        keyorid[id_loc] = unlist(ukb_dic %>% filter(CategoryID %in% id) %>% distinct(Category))
+        field_ids = ukb_dic %>% filter(Category %in% keyorid) %>% select(Category,FieldID,Field)
     }
-    print(field_ids)
     return(field_ids)
 }
 
 
-# prepare_get_field_ids(c("Dementia outcomes","Asthma outcomes"))
+# prepare_get_field_ids(c("Dementia outcomes","Asthma outcomes","46"))
 
