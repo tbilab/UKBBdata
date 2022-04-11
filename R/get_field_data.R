@@ -40,9 +40,9 @@ get_field_data = function(keyorid = NULL,match_name=FALSE){
 
   if (match_name){
     for (n in names(output)){
-      field = sapply(colnames(output[[n]]),function(x){strsplit(x,"-")}[[1]][1])[-1]
-      postfix = sapply(colnames(output[[n]]),function(x){strsplit(x,"-")}[[1]][2])[-1]
-      colnames(output[[n]])[-1] = paste0(ukb_dic[str_detect(ukb_dic$FieldID,paste(field,collapse = "|")),"Field"],"-",postfix)
+      field = sapply(colnames(output[[n]]),function(x){strsplit(x,"-")}[[1]][1])
+      postfix = sapply(colnames(output[[n]]),function(x){strsplit(x,"-")}[[1]][2])
+      colnames(output[[n]])[-1] = sapply(2:ncol(output[[n]]),function(i){paste0(ukb_dic[ukb_dic$FieldID==field[i],"Field"],"-",postfix[i])})
     }
   }
 
