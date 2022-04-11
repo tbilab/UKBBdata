@@ -21,6 +21,7 @@ library(aws.s3)
 load_ukbdata <- function(cats = c("ALL")){
 
     ukb_dic = aws.s3::s3readRDS("s3://ukb.tbilab/genome/UKB_Field_Dictionary.rds")
+    cat_list = aws.s3::s3readRDS("s3://ukb.tbilab/genome/UKB_Category_ID.rds")
     ukb_dic <<- ukb_dic
 
     ukb_data_list = list()
