@@ -16,14 +16,12 @@
 
 prepare_get_category = function(keyorid = NULL){
     cat_list = aws.s3::s3readRDS("s3://ukb.tbilab/genome/UKB_Category_ID.rds")
-    if (!is.null(keyorid)){
-        id_loc = suppressWarnings(which(!is.na(as.numeric(keyorid))))
-        id = keyorid[id_loc]
-        keyorid[id_loc] = unlist(cat_list %>% filter(CategoryID %in% id) %>% select(Category))
-
-        cat_list = cat_list[str_detect(cat_list$Category,paste(keyorid,collapse = '|')),]
-        }
-    return(cat_list)
+    # if (!is.null(keyorid)){
+    #     key_loc = suppressWarnings(which(is.na(as.numeric(keyorid))))
+    #     key = keyorid[key_loc]
+    #     keyorid[key_loc] = cat_list[str_detect(cat_list$Category,paste(key,collapse = '|')),"CategoryID"]
+    #     }
+    return(cat_list %>% filter(CategoryID %in% keyorid))
 }
 
-# prepare_get_category(c("Asthma","blood","46"))
+prepare_get_category(c("Asthma","blood","46","3001"))

@@ -12,10 +12,10 @@
 
 
 get_field_data = function(keyorid = NULL,match_name=FALSE){
-  if (!is.null(keyorid)){
-    id_loc = suppressWarnings(which(is.na(as.numeric(keyorid))))
-    keyorid[id_loc] = ukb_dic[str_detect(ukb_dic$Field,paste(keyorid[id_loc],collapse = "|")),"FieldID"]
-  }
+  # if (!is.null(keyorid)){
+  #   id_loc = suppressWarnings(which(is.na(as.numeric(keyorid))))
+  #   keyorid[id_loc] = ukb_dic[str_detect(ukb_dic$Field,paste(keyorid[id_loc],collapse = "|")),"FieldID"]
+  # }
   cats = unlist(ukb_dic %>% filter(FieldID %in% keyorid) %>% distinct(Category))
   loaded_cats = names(ukb_data_list)
   patterns = paste0("^",keyorid,"-")

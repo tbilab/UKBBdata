@@ -21,10 +21,10 @@ prepare_get_field_ids = function(keyorid = NULL){
         field_ids = ukb_dic %>% select(Category,FieldID,Field)
     }
     else{
-        id_loc = suppressWarnings(which(!is.na(as.numeric(keyorid))))
-        id = keyorid[id_loc]
-        keyorid[id_loc] = unlist(ukb_dic %>% filter(CategoryID %in% id) %>% distinct(Category))
-        field_ids = ukb_dic %>% filter(Category %in% keyorid) %>% select(Category,FieldID,Field)
+        key_loc = suppressWarnings(which(is.na(as.numeric(keyorid))))
+        key = keyorid[key_loc]
+        keyorid[key_loc] = unique(ukb_dic[str_detect(ukb_dic$Category,paste(key,collapse = '|')),"CategoryID"])
+        field_ids = ukb_dic %>% filter(CategoryID %in% keyorid) %>% select(Category,FieldID,Field)
     }
     return(field_ids)
 }
